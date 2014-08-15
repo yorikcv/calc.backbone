@@ -1,0 +1,30 @@
+
+.container {
+	position: relative;
+}
+
+.buttons{
+	width: 200px;
+
+
+}
+
+.numbers, .equal, .clear, .operations  {
+	height: 35px;
+	width: 35px;
+	float: left;
+	margin: 3px;
+}
+
+
+#historyFrame{
+	height: 300px;
+	position: absolute;
+	width: 500px;
+	left: 350px;
+}
+
+
+#display {
+	width: 165px;
+}
