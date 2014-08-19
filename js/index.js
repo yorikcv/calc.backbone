@@ -77,7 +77,7 @@
 
 		destroy: function () {
 			console.log(this.model);
-			this.model.destroy();
+			this.remove();
 		},
 
 		remove: function () {
@@ -129,10 +129,10 @@
         el: '.container',
 
         initialize: function(){
-        	$('.numbers').click(this.numbersClick);
-        	$('.operations').click(this.operationsClick);
-        	$('.equal').click(this.equalClick);
-        	$('.clear').click(this.clearClick);
+        	this.$('.numbers').click(this.numbersClick);
+        	this.$('.operations').click(this.operationsClick);
+        	this.$('.equal').click(this.equalClick);
+        	this.$('.clear').click(this.clearClick);
         	//this.$el.on('click .numbers', this.numbersClick);
         },
 
