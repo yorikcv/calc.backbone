@@ -5,7 +5,7 @@
 		Views: {},
 		Collections: {}
 	};
-	App.Models.Control = Backbone.Model.extend();
+	// App.Models.Control = Backbone.Model.extend();
 
 	//model of one calculation
 	App.Models.Сalculation = Backbone.Model.extend({
@@ -19,6 +19,20 @@
 		add: function () {
 			this.set({result: this.get('firstNumber') + this.get('secondNumber')});
 			return this.get('result')
+		},
+		
+		validateResult: function(result) {
+			return (result > 100) ? false : true;			
+		},
+
+		setResult: function(value) {
+			if (this.validateResult()) {
+				this.set('result', value);
+			}			
+		},
+
+		getResult: function() {
+			return this.get('result');
 		},
 
 		sub: function () {
@@ -41,6 +55,10 @@
 			if(this.get('operand') == "-") this.sub();
 			if(this.get('operand') == "*") this.mul();
 			if(this.get('operand') == "/") this.div();
+		},
+
+		delete: function () {
+			this.destroy();
 		}
 
 	});
@@ -55,40 +73,40 @@
 
 	App.Views.Сalculation = Backbone.View.extend({
 		tagName: 'li',
-		template: _.template('<%= firstNumber %> <%= operand %> <%= secondNumber %> = <%= result %> <button class="delete">Delete</button>'),
+		template: _.template($('#templateli').html()),
 
 
-		initialize: function () {
-		 this.render();
-		 this.model.on('destroy', this.remove, this);
+		initialize: function () {		 
+			 
+		},
 
+		events: {
+			'click .delete': 'destroy'
 		},
 
 		render: function () {
 			this.model.calc();
-			// console.log(this.model);
+		 	console.log(this.model);
 			this.$el.html( this.template( this.model.toJSON() ) );
-
+			this.attachEvents();
+			return this;
 		},
 
-		events:{
-			'click .delete' : 'destroy'
+		attachEvents: function() {
+			this.model.on('destroy', this.remove, this);
+			this.$('.delete').on('click', _.bind(this.destroy, this));
 		},
 
 		destroy: function () {
-			console.log(this.model);
+			console.log("yyyeeee");
 			this.remove();
-		},
-
-		remove: function () {
-			this.$el.remove();
 		}
 
 	});
 	
 	//view for calculations of colection
 
-	calculation = new App.Models.Сalculation();
+	// calculation = new App.Models.Сalculation();
 
 	App.Views.HistoryCollections = Backbone.View.extend({
 		tagName: 'ul',
@@ -96,23 +114,29 @@
 
 		initialize: function () {
 			this.render();
-			this.collection.on('add', this.render, this);
+			this.collection.on('add', this.add, this);
 		},
 
 		render: function () {
 
-			this.$el.empty();
+			// this.$el.empty();
 			this.collection.each(function (num) {
-				calculation=this.collection.get(num);
-				var calculationView = new App.Views.Сalculation({model: calculation});
+				var calculationView = new App.Views.Сalculation({model: num});
 								
 
-				this.$el.append(calculationView.el);
+				this.$el.append(calculationView.render().el);
+				//console.log(calculationView.el);
 			}, this);
 
 			$('#history').html(this.el);
 
 			return this;
+		}, 
+
+		add: function () {
+			var calculationView = new App.Views.Сalculation({model: this.collection.last()});
+			this.$el.append(calculationView.render().el);
+			$('#history').append(this.el);
 		}
 	});
 
@@ -127,13 +151,18 @@
 
     App.Views.Control = Backbone.View.extend({
         el: '.container',
+        display: $("#display"),
 
         initialize: function(){
-        	this.$('.numbers').click(this.numbersClick);
+        	this.$('.numbers').on('click', this.numbersClick);
         	this.$('.operations').click(this.operationsClick);
         	this.$('.equal').click(this.equalClick);
         	this.$('.clear').click(this.clearClick);
         	//this.$el.on('click .numbers', this.numbersClick);
+        },
+
+        events : {
+        	'click .numbers': 'numbersClick'
         },
 
         render: function() {
@@ -191,7 +220,7 @@
 
     });
 	
-	calculationCollection = new App.Collections.Сalculation([{firstNumber: 4, secondNumber: 5, operand: '+'}]);
+	window.calculationCollection = new App.Collections.Сalculation([{firstNumber: 4, secondNumber: 5, operand: '+'},{firstNumber: 6, secondNumber: 5, operand: '-'}]);
 
 	historyView = new App.Views.HistoryCollections({collection: calculationCollection});
 	controlView = new App.Views.Control({});
