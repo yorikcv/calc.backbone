@@ -20,20 +20,6 @@
 			this.set({result: this.get('firstNumber') + this.get('secondNumber')});
 			return this.get('result')
 		},
-		
-		validateResult: function(result) {
-			return (result > 100) ? false : true;			
-		},
-
-		setResult: function(value) {
-			if (this.validateResult()) {
-				this.set('result', value);
-			}			
-		},
-
-		getResult: function() {
-			return this.get('result');
-		},
 
 		sub: function () {
 			this.set({result: this.get('firstNumber') - this.get('secondNumber')});
@@ -59,7 +45,24 @@
 
 		delete: function () {
 			this.destroy();
+		},
+
+
+		validateResult: function(result) {
+			return (result > 100) ? false : true;			
+		},
+
+		setResult: function(value) {
+			if (this.validateResult()) {
+				this.set('result', value);
+			}			
+		},
+
+		getResult: function() {
+			return this.get('result');
 		}
+
+
 
 	});
 
@@ -99,6 +102,7 @@
 
 		destroy: function () {
 			console.log("yyyeeee");
+			this.model.delete();
 			this.remove();
 		}
 
@@ -141,7 +145,7 @@
 	});
 
 
-	var display = $("#display");
+	//var display = $("#display");
 	var numbers = '';
 	var firstNumber = '';
 	var secondNumber = '';
@@ -151,28 +155,28 @@
 
     App.Views.Control = Backbone.View.extend({
         el: '.container',
-        display: $("#display"),
+        // display: $("#display"),
 
         initialize: function(){
         	this.$('.numbers').on('click', this.numbersClick);
-        	this.$('.operations').click(this.operationsClick);
-        	this.$('.equal').click(this.equalClick);
-        	this.$('.clear').click(this.clearClick);
-        	//this.$el.on('click .numbers', this.numbersClick);
-        },
+        	this.$('.operations').on('click', this.operationsClick);
+        	this.$('.equal').on('click', this.equalClick);
+        	this.$('.clear').on('click', this.clearClick);
 
-        events : {
-        	'click .numbers': 'numbersClick'
         },
 
         render: function() {
+
         	
         },
 
         numbersClick: function () {
-        	if(result == 1) {display.val(''); result = '';}
+        	// var display = $("#display");
+
+        	if(result == 1) {display.value=''; result = '';}
+        	
 			numbers += $(this).text();
-			display.val(display.val() + $(this).text());
+			display.value=(display.value + $(this).text());
         },
         operationsClick: function () {
         	 if(operand == '')
@@ -182,7 +186,7 @@
 				{					
 					numbers = '';
 					operand = $(this).text();
-				display.val(display.val() + $(this).text());
+				display.value=(display.value + $(this).text());
 
 					//console.log(numbers + "ope" + operand);
 				}
@@ -195,8 +199,9 @@
 
 			var calculationAdd = new App.Models.Сalculation({firstNumber: firstNumber, secondNumber: secondNumber, operand: operand});
 			calculationCollection.add(calculationAdd);
+			
 
-			display.val(calculationAdd.get('result'));
+			display.value=(calculationAdd.get('result'));
 
 			
 			operand = '';
@@ -204,7 +209,7 @@
 
         },
         clearClick: function () {
-        	display.val('');
+        	display.value='';
 
 			firstNumber = '';
 			secondNumber = '';
